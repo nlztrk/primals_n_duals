@@ -9,6 +9,8 @@
 from base_components import Node, Line, Network
 from primal_network import PrimalNetwork
 from dual_network import DualNetwork
+from heatmap import plot_heatmap
+
 
 example_net = Network()
 
@@ -91,11 +93,15 @@ Weighted: True, False
 '''
 example_net.autoscale_network()
 
-example_net.show_network(show="lines", weighted=True)
-example_net.show_network(show="nodes", weighted=True)
-
 aij = example_net.generate_aij_matrix()
 print("Generated a_ij matrix;\n\n", aij)
+
+example_net.show_network(show="nodes", weighted=True)
+plot_heatmap(network=example_net, mode="nodes")
+
+example_net.show_network(show="lines", weighted=True)
+plot_heatmap(network=example_net, mode="lines")
+
 
 # primal_net = PrimalNetwork(network=example_net, step_count = 1)
 # primal_net.show_network() 
