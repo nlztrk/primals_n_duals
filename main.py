@@ -97,10 +97,10 @@ aij = example_net.generate_aij_matrix()
 print("Generated a_ij matrix;\n\n", aij)
 
 example_net.show_network(show="nodes", weighted=True)
-plot_heatmap(network=example_net, mode="nodes")
+plot_heatmap(network=example_net, mode="nodes", sharpness_factor=10)
 
 example_net.show_network(show="lines", weighted=True)
-plot_heatmap(network=example_net, mode="lines")
+plot_heatmap(network=example_net, mode="lines", sharpness_factor=10)
 
 
 # primal_net = PrimalNetwork(network=example_net, step_count = 1)

@@ -12,19 +12,19 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-def generate_heatmap(network, mode="nodes"):
+def generate_heatmap(network, mode="nodes", sharpness_factor=15):
             
     coords = []
     line_coords = []
 
     if mode=="nodes":
         for node in network.nodes:
-            for i in range(int(node.size)):
+            for i in range(int(node.size * sharpness_factor)):
                 coords.append([node.x, node.y])
                 
     elif mode=="lines":
         for line in network.lines:
-            for i in range(int(line.size)):
+            for i in range(int(line.size * sharpness_factor)):
                 cx = (line.start_x + line.end_x) / 2
                 cy = (line.start_y + line.end_y) / 2               
                 coords.append([cx, cy])
@@ -33,7 +33,7 @@ def generate_heatmap(network, mode="nodes"):
     return coords, line_coords
 
 
-def plot_heatmap(network, mode="nodes"):
+def plot_heatmap(network, mode="nodes", sharpness_factor=5):
 
     """
     Input:
@@ -43,7 +43,7 @@ def plot_heatmap(network, mode="nodes"):
 
     plt.gca().invert_yaxis()
 
-    coords, line_coords = generate_heatmap(network=network, mode=mode)
+    coords, line_coords = generate_heatmap(network=network, mode=mode, sharpness_factor=sharpness_factor)
     x,y = np.array(coords).T
     ax = sns.kdeplot(x, y, cmap="Blues", shade=True, shade_lowest=False, n_levels=100)
 
