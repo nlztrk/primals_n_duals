@@ -16,7 +16,7 @@ class Node:
     def __init__(self, pos_x, pos_y, connected_lines):
         self.x = pos_x
         self.y = pos_y
-        self.size = len(connected_lines)*6
+        self.size = 1
         self.connected_lines = connected_lines
 
 class Line:
@@ -25,7 +25,7 @@ class Line:
         self.start_y = start_y
         self.end_x = end_x
         self.end_y = end_y
-        self.size = len(connected_nodes)
+        self.size = 1
         self.connected_nodes = connected_nodes
 
 class Network:
@@ -34,6 +34,7 @@ class Network:
         self.lines = []
         self.print_offset = 150
         self.desired_size = 850
+
 
     def create_node(self, pos, connected_lines):
         self.nodes.append(Node(pos[0], pos[1], connected_lines))
@@ -90,12 +91,70 @@ class Network:
     def generate_aij_matrix(self):
         aij = np.zeros((len(self.lines)+1, len(self.nodes)+1))
 
-        for i, node in enumerate(self.nodes):
-            for j in node.connected_lines:
-                aij[j,i] = 1
+        for j, node in enumerate(self.nodes):
+            for i in node.connected_lines:
+                aij[i,j] = 1
         
         aij[-1,:] = aij.sum(axis=0)
         aij[:,-1] = aij.sum(axis=1)
+
+        self.l_i = np.zeros(len(self.lines))
+        self.p_j = np.zeros(len(self.nodes))
+        self.l_ik = np.zeros((len(self.lines), len(self.lines)))
+        self.p_jl = np.zeros((len(self.nodes), len(self.nodes)))
+        self.dashed_l_i = np.zeros(len(self.lines))
+        self.dashed_p_j = np.zeros(len(self.nodes))
+
+        ## calculating primal stats
+        for i in range(len(self.lines)):
+
+            ## l_i calculation
+            li = 0
+            for j in range(len(self.nodes)):
+                li += aij[i,j]
+            self.l_i[i] = li
+
+            ## l_ik calculation
+            for k in range(len(self.lines)): ## second line
+                lik = 0
+                for j in range(len(self.nodes)):
+                    lik += aij[i,j] * aij[k,j]
+                self.l_ik[i,k] = lik
+
+            ## dashed_l_i calculation
+            dashed_li = 0
+            for k in range(len(self.lines)): ## second line
+                dashed_li += self.l_ik[i,k]
+            self.dashed_l_i[i] = dashed_li
+
+        ## calculating dual stats
+        for j in range(len(self.nodes)):
+
+            ## p_j calculation
+            pj = 0
+            for i in range(len(self.lines)):
+                pj += aij[i,j]
+            self.p_j[j] = pj
+
+            ## p_jl calculation
+            for l in range(len(self.nodes)): ## second node
+                pjl = 0
+                for i in range(len(self.lines)):
+                    pjl += aij[i,j] * aij[i,l]
+                self.p_jl[j,l] = pjl
+
+            ## dashed_p_j calculation
+            dashed_pj = 0
+            for l in range(len(self.nodes)): ## second node
+                dashed_pj += self.p_jl[j,l]
+            self.dashed_p_j[j] = dashed_pj
+
+        ## setting out_degree sizes
+        for j in range(len(self.nodes)):
+            self.nodes[j].size = self.dashed_p_j[j] * 1.75
+        for i in range(len(self.lines)):
+            self.lines[i].size = self.dashed_l_i[i]         
+
 
         return aij
 

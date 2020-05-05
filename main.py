@@ -11,7 +11,6 @@ from primal_network import PrimalNetwork
 from dual_network import DualNetwork
 from heatmap import plot_heatmap
 
-
 example_net = Network()
 
 example_net.create_node(pos=(0, 236), connected_lines=[0]) # Node 0
@@ -87,36 +86,39 @@ example_net.create_line(start=(765, 624), end=(789, 570)) # Line 24
 example_net.create_line(start=(350, 700), end=(996, 715)) # Line 25
 
 
+## MUST RUN THESE
+aij = example_net.generate_aij_matrix()
+print("Generated a_ij matrix;\n\n", aij)
+example_net.autoscale_network()
+
+
+## SHOWCASE
 '''
 Show: 'nodes', 'lines', 'all'
 Weighted: True, False
 '''
-example_net.autoscale_network()
-
-aij = example_net.generate_aij_matrix()
-print("Generated a_ij matrix;\n\n", aij)
-
 example_net.show_network(show="nodes", weighted=True)
 plot_heatmap(network=example_net, mode="nodes", sharpness_factor=10)
 
 example_net.show_network(show="lines", weighted=True)
 plot_heatmap(network=example_net, mode="lines", sharpness_factor=10)
 
+## PRIMAL NETWORKS W/ DIFFERENT STEPS
+primal_net = PrimalNetwork(network=example_net, step_count = 1)
+primal_net.show_network() 
 
-# primal_net = PrimalNetwork(network=example_net, step_count = 1)
-# primal_net.show_network() 
+primal_net = PrimalNetwork(network=example_net, step_count = 2)
+primal_net.show_network() 
 
-# primal_net = PrimalNetwork(network=example_net, step_count = 2)
-# primal_net.show_network() 
+primal_net = PrimalNetwork(network=example_net, step_count = 3)
+primal_net.show_network() 
 
-# primal_net = PrimalNetwork(network=example_net, step_count = 3)
-# primal_net.show_network() 
+## DUAL NETWORKS W/ DIFFERENT STEPS
+dual_net = DualNetwork(network=example_net, step_count = 1)
+dual_net.show_network() 
 
-# dual_net = DualNetwork(network=example_net, step_count = 1)
-# dual_net.show_network() 
+dual_net = DualNetwork(network=example_net, step_count = 2)
+dual_net.show_network() 
 
-# dual_net = DualNetwork(network=example_net, step_count = 2)
-# dual_net.show_network() 
-
-# dual_net = DualNetwork(network=example_net, step_count = 3)
-# dual_net.show_network() 
+dual_net = DualNetwork(network=example_net, step_count = 3)
+dual_net.show_network() 
